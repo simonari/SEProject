@@ -7,7 +7,8 @@ from .models import Vacancy
 from . import custom_typings as ct
 from .logger import logger
 
-class DataBaseManger:
+
+class DataBaseManager:
     def __init__(self):
         self.engine = database.engine
         self.session = database.SessionLocal

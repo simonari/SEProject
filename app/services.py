@@ -31,14 +31,14 @@ class DataBaseManager:
         missing = set([i["id"] for i in data])
 
         # getting ids that presented in database
-        query = orm.select(models.Vacancy.id)
+        query = orm.select(Vacancy.id)
         existing = set(item[0] for item in await session.execute(query))
 
         # leaving only unique for database ids
         missing -= existing
 
         # creating a list of items that we want to add
-        to_add = [models.Vacancy(**item) for item in data if item["id"] in missing]
+        to_add = [Vacancy(**item) for item in data if item["id"] in missing]
         logger.info(f"({id(self)}): {len(to_add)} / {len(data)} will be added")
 
         # adding items and saving state of database

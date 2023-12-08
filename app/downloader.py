@@ -4,7 +4,7 @@ import re
 import aiohttp
 import aiohttp.web_exceptions
 
-from .services import DataBaseManger
+from .services import DataBaseManager
 from .logger import logger
 
 HEADERS = {"User-Agent": "Magistracy Diploma/0.1 (vsimonari@gmail.com)"}
@@ -127,7 +127,7 @@ class DownloaderHH(BaseDownloader):
 
         logger.info(f"({id(self)}): There is {len(found)} vacancies")
         logger.info(f"({id(self)}): Instantiating DataBaseManager")
-        db = DataBaseManger()
+        db = DataBaseManager()
         logger.info(f"({id(self)}): Manager instantiated on {id(db)}")
         logger.info(f"({id(self)}): Trying to save them to database")
         await db.add_data(found)

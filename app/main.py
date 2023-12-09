@@ -4,11 +4,17 @@ from .logger import logger
 from .scheduler import DownloadSchedule
 from . import task_manager as tm
 from .services import DataBaseManager
+from .database import init_tables
 
 app = FastAPI()
 
 scheduler = DownloadSchedule()
 scheduler.start()
+
+
+@app.on_event("startup")
+async def on_startup():
+    await init_tables()
 
 
 @app.get("/vacancies/{query}")

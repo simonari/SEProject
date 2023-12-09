@@ -87,9 +87,9 @@ class DownloadSchedule(Scheduler):
     async def _start_pending(self):
         while True:
             await asyncio.sleep(1)
-            print(f"{datetime.now()} i'm running")
+            # print(f"{datetime.now()} i'm running")
             job = self.get_jobs()[-1]
-            print(job.at_time, job.job_func)
+            # print(job.at_time, job.job_func)
             self.run_pending()
 
     def start(self):

@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from . import models
 
 load_dotenv()
 
@@ -15,3 +16,8 @@ DB_URL = f"postgresql+asyncpg://{PG_USER}:{PG_PASSWORD}@{PG_URI}/{PG_DB}"
 engine = create_async_engine(DB_URL)
 
 SessionLocal = async_sessionmaker(bind=engine, autocommit=False, autoflush=False)
+
+
+async def init_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(models.Base.metadata.create_all)

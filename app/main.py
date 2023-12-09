@@ -18,10 +18,10 @@ async def on_startup():
 
 
 @app.get("/vacancies/{query}")
-async def get_vacancy(query: str):
+async def get_vacancy(api: str, query: str):
     logger.info(f"Got GET request with query: {query}")
     logger.info(f"Queueing task to Celery")
-    tm.download.delay(query)
+    tm.get_download.delay(api, query)
     return 200
 
 

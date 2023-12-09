@@ -3,20 +3,54 @@ version: "3.5"
 services:
   db:
     image: postgres:16-alpine
-    container_name: "${POSTGRES_CONTAINER_NAME}"
-
+    container_name: "${DOCKER_PG_CONTAINER_NAME}"
     volumes:
-      - "${POSTGRES_DOCKER_VOLUME}:/var/lib/postgresql/data/"
-
+      - "${DOCKER_PG_VOLUME}:/var/lib/postgresql/data/"
     ports:
-      - "5432:5432"
-
+      - "5434:5432"
     environment:
-      POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-      POSTGRES_DB: "${POSTGRES_DB}"
-
+      POSTGRES_USER: "${DOCKER_PG_USER}"
+      POSTGRES_PASSWORD: "${DOCKER_PG_PASSWORD}"
+      POSTGRES_DB: "${DOCKER_PG_DB}"
     restart: always
+  rabbitmq:
+    image: rabbitmq:3.12.10-management-alpine
+    container_name: "${DOCKER_RMQ_CONTAINER_NAME}"
+    ports:
+      - "4370:4369"
+      - "5673:5672"
+      - "25673:25672"
+      - "15673:15672"
+  app:
+    build: ./docker/app/Dockerfile
+    container_name: "${DOCKER_APP_CONTAINER_NAME}"
+    environment:
+      APP_BROKER_URI: "${APP_BROKER_URI}"
+      DOCKER_PG_USER: "${DOCKER_PG_USER}"
+      DOCKER_PG_PASSWORD: "${DOCKER_PG_PASSWORD}"
+      DOCKER_PG_DB: "${DOCKER_PG_DB}"
+      DOCKER_PG_URI: "${DOCKER_PG_CONTAINER_NAME}"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+    volumes:
+      - "./app:/app"
+    command: "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+  celery:
+    build: ./docker/celery/Dockerfile
+    container_name: "${DOCKER_CLR_CONTAINER_NAME}"
+    environment:
+      APP_BROKER_URI: "${APP_BROKER_URI}"
+      DOCKER_PG_USER: "${DOCKER_PG_USER}"
+      DOCKER_PG_PASSWORD: "${DOCKER_PG_PASSWORD}"
+      DOCKER_PG_DB: "${DOCKER_PG_DB}"
+      DOCKER_PG_URI: "${DOCKER_PG_CONTAINER_NAME}"
+    depends_on:
+      - rabbitmq
+    volumes:
+      - "./app:/app"
+    command: "celery -A app.task_manager worker --loglevel=INFO"
 
 networks:
   default:

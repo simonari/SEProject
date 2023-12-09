@@ -4,11 +4,13 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 load_dotenv()
 
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_DB = os.getenv("POSTGRES_DB")
+PG_USER = os.getenv("DOCKER_PG_USER")
+PG_PASSWORD = os.getenv("DOCKER_PG_PASSWORD")
+PG_DB = os.getenv("DOCKER_PG_DB")
+PG_URI = os.getenv("DOCKER_PG_URI")
 
-DB_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost/{POSTGRES_DB}"
+
+DB_URL = f"postgresql+asyncpg://{PG_USER}:{PG_PASSWORD}@{PG_URI}/{PG_DB}"
 
 engine = create_async_engine(DB_URL)
 

@@ -5,6 +5,7 @@ from .scheduler import DownloadSchedule
 from . import task_manager as tm
 from .services import DataBaseManager
 from .database import init_tables
+from .analyzer import HHAnalyzer
 
 app = FastAPI()
 
@@ -40,4 +41,11 @@ async def get_data(salary_leq: str | None = None,
     db = DataBaseManager()
     data = await db.get_data(query_dict)
 
+    return data
+
+
+@app.get("/analyze_salary")
+async def analyze_salary(query: str):
+    hha = HHAnalyzer()
+    data = await hha.analyze_salary(query)
     return data

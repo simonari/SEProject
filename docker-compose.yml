@@ -22,7 +22,9 @@ services:
       - "25673:25672"
       - "15673:15672"
   app:
-    build: ./docker/app/Dockerfile
+    build:
+        context: .
+        dockerfile:  "./docker/app/Dockerfile"
     container_name: "${DOCKER_APP_CONTAINER_NAME}"
     environment:
       APP_BROKER_URI: "${APP_BROKER_URI}"
@@ -38,7 +40,9 @@ services:
       - "./app:/app"
     command: "uvicorn app.main:app --host 0.0.0.0 --port 8000"
   celery:
-    build: ./docker/celery/Dockerfile
+    build:
+        context: .
+        dockerfile: "./docker/celery/Dockerfile"
     container_name: "${DOCKER_CLR_CONTAINER_NAME}"
     environment:
       APP_BROKER_URI: "${APP_BROKER_URI}"

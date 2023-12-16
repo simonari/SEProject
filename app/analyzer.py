@@ -24,7 +24,7 @@ class HHAnalyzer(BaseAnalyzer):
         #не отрабатывает salary_given? бывают Nan в обоих полях
         data = [s for s in data if ((s.salary_from is not None)
                 or (s.salary_to is not None))
-                and s.currency == "RUR"#анализ только зп в рублях
+                and s.currency == "RUR" #анализ только зп в рублях
                 ]
         #хранить зп буду в salary_from
         for vac in data:
@@ -68,8 +68,18 @@ class HHAnalyzer(BaseAnalyzer):
             "y": y,                             # значения зарплат интерполяции
         }
 
-    async def analyze_experience(self):
-        pass
+    async def analyze_experience(self, name: str):
+        data = await self.db.get_data({
+            "name": name
+        })
+        experience = [s.experience for s in data]
+        experience = dict((x, experience.count(x)) for x in set(experience) if experience.count(x) >= 1)
+        return {"experience": experience}
 
-    async def analyze_employment(self):
-        pass
+    async def analyze_employment(self, name: str):
+        data = await self.db.get_data({
+            "name": name
+        })
+        employment = [s.employment for s in data]
+        employment = dict((x, employment.count(x)) for x in set(employment) if employment.count(x) >= 1)
+        return {"employment": employment}

@@ -40,7 +40,6 @@ async def get_data(salary_leq: str | None = None,
 
     db = DataBaseManager()
     data = await db.get_data(query_dict)
-
     return data
 
 
@@ -48,4 +47,18 @@ async def get_data(salary_leq: str | None = None,
 async def analyze_salary(query: str):
     hha = HHAnalyzer()
     data = await hha.analyze_salary(query)
+    return data
+
+
+@app.get("/analyze_experience")
+async def analyze_experience(query: str):
+    hha = HHAnalyzer()
+    data = await hha.analyze_experience(query)
+    return data
+
+
+@app.get("/analyze_employment")
+async def analyze_employment(query: str):
+    hha = HHAnalyzer()
+    data = await hha.analyze_employment(query)
     return data

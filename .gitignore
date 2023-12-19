@@ -2,3 +2,6 @@
 pg-db/
 .log
 timetable.json
+docker
+docker-compose
+./app/__pycache__

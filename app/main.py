@@ -6,6 +6,7 @@ from . import task_manager as tm
 from .services import DataBaseManager
 from .database import init_tables
 from .analyzer import HHAnalyzer
+from .downloader import Downloader
 
 app = FastAPI()
 
@@ -22,13 +23,11 @@ async def on_startup():
 async def get_vacancy(api: str, query: str):
     logger.info(f"Got GET request with query: {query}")
     logger.info(f"Queueing task to Celery")
-    tm.get_download.delay(api, query)
+
+    d = Downloader(api, query)
+    await d.run()
+
     return 200
-
-
-@app.get("/scheduler/add/{api}/{time}/{query}")
-async def add_task(api: str, time: str, query: str):
-    scheduler.add_task(api, query, time)
 
 
 @app.get("/vacancies/")

@@ -50,7 +50,7 @@ class DataBaseManager:
         await session.close()
         logger.info(f"({id(self)}): Session closed")
 
-    async def get_data(self, query_dict: dict[str, str]):
+    async def get_data(self, query_dict: dict[str, str]) -> list[Vacancy]:
         op_map: dict[str, orm.Select] = dict()
 
         if "name" in query_dict:

@@ -3,6 +3,7 @@ from datetime import datetime
 import numpy as np
 import scipy.interpolate
 
+
 class BaseAnalyzer:
     def __init__(self):
         self.db = DataBaseManager()
@@ -19,8 +20,6 @@ class HHAnalyzer(BaseAnalyzer):
             "currency": "RUR"
         })
 
-       # data = [s for s in data if s.currency == "RUR"]
-
         if len(data) < 2:
             return {
                 "len": len(data),  # количество проанализированных вакансий
@@ -30,7 +29,7 @@ class HHAnalyzer(BaseAnalyzer):
         for vac in data:
             if vac.salary_to is not None:
                 vac.salary_from = (vac.salary_from + vac.salary_to) / 2
-        #анализ средних
+        # анализ средних
         salaries = [s.salary_from for s in data]
         mean = np.mean(salaries)
         median = np.median(salaries)
@@ -48,14 +47,14 @@ class HHAnalyzer(BaseAnalyzer):
             average_salary = sum(salaries) / len(salaries)
             data_avg.append({"published_at": time, "salary": average_salary})
 
-        data_avg = sorted(data_avg, key=lambda vac: vac["published_at"])
+        data_avg = sorted(data_avg, key=lambda v: v["published_at"])
         # строим данные интерполяции
         y = [s["salary"] for s in data_avg]
         x = [s["published_at"].timestamp() for s in data_avg]
-        interpoler = scipy.interpolate.CubicSpline(x, y)
-        interpolation_count = 500 # число точек для графика
+        interpolator = scipy.interpolate.CubicSpline(x, y)
+        interpolation_count = 500  # число точек для графика
         x = np.linspace(x[0], x[len(x) - 1], num=500).tolist()
-        y = list(interpoler(x))
+        y = list(interpolator(x))
 
         x = [datetime.fromtimestamp(s) for s in x]
         return {
@@ -66,7 +65,6 @@ class HHAnalyzer(BaseAnalyzer):
             "y": y,                             # значения зарплат интерполяции
             "msg": "success"
         }
-
 
     async def analyze_experience(self, name: str):
         data = await self.db.get_data({

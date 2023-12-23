@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 
 from .logger import logger
 from .services import DataBaseManager
@@ -47,3 +48,12 @@ async def analyze(name: str | None = None,
     hha = HHAnalyzer()
     return await hha.analyze(query_dict)
 
+
+@app.get("/vacancies/analyze/images")
+async def get_processed_image(path: str):
+    available_paths = [
+        "salaries.png",
+        "experience.png",
+        "employment.png"
+    ]
+    return FileResponse(path)

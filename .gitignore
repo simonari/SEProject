@@ -2,3 +2,4 @@
 pg-db/
 .log
 timetable.json
+__pycache__/

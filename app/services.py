@@ -53,6 +53,11 @@ class DataBaseManager:
     async def get_data(self, query_dict: dict[str, str]):
         op_map: dict[str, orm.Select] = dict()
 
+        if "name" in query_dict:
+            op_map["name"] = orm.select(Vacancy).where(
+                Vacancy.name.contains(query_dict["name"])
+            )
+
         if "salary_leq" in query_dict:
             op_map["salary_leq"] = orm.select(Vacancy).where(
                 orm.or_(

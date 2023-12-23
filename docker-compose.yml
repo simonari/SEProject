@@ -26,8 +26,6 @@ services:
       DOCKER_PG_URI: "${DOCKER_PG_CONTAINER_NAME}"
     ports:
       - "8000:8000"
-    depends_on:
-      - rabbitmq
     volumes:
       - "./app:/app"
     command: "uvicorn app.main:app --host 0.0.0.0 --port 8000"

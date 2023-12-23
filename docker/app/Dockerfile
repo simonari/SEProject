@@ -13,9 +13,6 @@ RUN apt-get update
 
 # Installig python libraries
 COPY ./requirements.txt /requirements.txt
-RUN pip install -r /requirements.txt
-
-#COPY ./app/ /app
-#WORKDIR /app
+RUN pip install  --no-cache-dir --upgrade -r /requirements.txt
 
 EXPOSE 8000

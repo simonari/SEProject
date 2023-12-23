@@ -14,8 +14,8 @@ async def on_startup():
     await init_tables()
 
 
-@app.get("/vacancies/{query}")
-async def get_vacancy(api: str, query: str):
+@app.get("/vacancies/download/")
+async def download_vacancies(api: str, query: str):
     logger.info(f"Got GET request with query: {query}")
     logger.info(f"Queueing task to Celery")
 
@@ -25,34 +25,25 @@ async def get_vacancy(api: str, query: str):
     return 200
 
 
-@app.get("/vacancies/")
-async def get_data(salary_leq: str | None = None,
+@app.get("/vacancies/get")
+async def get_data(name: str | None = None,
+                   salary_leq: str | None = None,
                    salary_gte: str | None = None,
                    salary_given: str | None = None,
                    salary_empty: str | None = None):
     query_dict = {k: v for k, v in locals().items() if v is not None}
-
     db = DataBaseManager()
     data = await db.get_data(query_dict)
     return data
 
 
-@app.get("/analyze_salary")
-async def analyze_salary(query: str):
+@app.get("/vacancies/analyze")
+async def analyze(name: str | None = None,
+                  salary_leq: str | None = None,
+                  salary_gte: str | None = None,
+                  salary_given: str | None = None,
+                  salary_empty: str | None = None):
+    query_dict = {k: v for k, v in locals().items() if v is not None}
     hha = HHAnalyzer()
-    data = await hha.analyze_salary(query)
-    return data
+    return await hha.analyze(query_dict)
 
-
-@app.get("/analyze_experience")
-async def analyze_experience(query: str):
-    hha = HHAnalyzer()
-    data = await hha.analyze_experience(query)
-    return data
-
-
-@app.get("/analyze_employment")
-async def analyze_employment(query: str):
-    hha = HHAnalyzer()
-    data = await hha.analyze_employment(query)
-    return data

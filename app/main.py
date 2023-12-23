@@ -1,17 +1,12 @@
 from fastapi import FastAPI
 
 from .logger import logger
-from .scheduler import DownloadSchedule
-from . import task_manager as tm
 from .services import DataBaseManager
 from .database import init_tables
 from .analyzer import HHAnalyzer
 from .downloader import Downloader
 
 app = FastAPI()
-
-scheduler = DownloadSchedule()
-scheduler.start()
 
 
 @app.on_event("startup")

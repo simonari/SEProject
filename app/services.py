@@ -50,43 +50,46 @@ class DataBaseManager:
         await session.close()
         logger.info(f"({id(self)}): Session closed")
 
-    async def get_data(self, query_dict: dict[str, str]) -> list[Vacancy]:
-        op_map: dict[str, orm.Select] = dict()
+    async def get_data(self, query_dict: dict[str, str]) -> list[Vacancy] | dict[str, str]:
+        query = orm.select(Vacancy)
 
         if "name" in query_dict:
-            op_map["name"] = orm.select(Vacancy).where(
-                Vacancy.name.contains(query_dict["name"])
-            )
-
+            query = query.where(Vacancy.name.contains(query_dict["name"]))
         if "salary_leq" in query_dict:
-            op_map["salary_leq"] = orm.select(Vacancy).where(
-                orm.or_(
-                    Vacancy.salary_to <= float(query_dict["salary_leq"]),
-                    Vacancy.salary_from <= float(query_dict["salary_leq"])
-                ),
+            query = query.where(
+                    orm.or_(
+                        Vacancy.salary_to <= float(query_dict["salary_leq"]),
+                        Vacancy.salary_from <= float(query_dict["salary_leq"])
+                    )
             )
         if "salary_gte" in query_dict:
-            op_map["salary_gte"] = orm.select(Vacancy).where(
+            query = query.where(
                 orm.or_(
                     Vacancy.salary_to >= float(query_dict["salary_gte"]),
                     Vacancy.salary_from >= float(query_dict["salary_gte"])
                 ),
             )
         if "salary_given" in query_dict:
-            op_map["salary_given"] = orm.select(Vacancy).where(Vacancy.salary_from != None)
+            query = query.where(Vacancy.salary_from != None)
         if "salary_empty" in query_dict:
-            op_map["salary_empty"] = orm.select(Vacancy).where(Vacancy.salary_from == None)
+            query = query.where(Vacancy.salary_from == None)
+        if "currency" in query_dict:
+            query = query.where(Vacancy.currency == query_dict["currency"])
 
         logger.info(f"({id(self)}): Establishing session with database")
 
         async with self.session() as session:
-            # If op_mas is empty - throw HTTP400 error code
-            if op_map == {}:
-                return {"No query was provided": 400}
+            if query == orm.select(Vacancy):
+                return {"No query was provided": "400"}
 
-            # Otherwise - do all the selects and return it
-            query = orm.union_all(*[op_map[key] for key in query_dict])
             result = await session.execute(query)
 
+        result = [item[0].__dict__ for item in result.all()]
+        for item in result:
+            item.pop("_sa_instance_state")
+        print(query_dict)
+        print(query)
+        print(result)
+
         logger.info(f"({id(self)}): Session closed")
-        return [Vacancy(**item) for item in result.mappings().all()]
+        return [Vacancy(**item) for item in result]

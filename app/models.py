@@ -23,3 +23,10 @@ class Vacancy(Base):
     key_skills = sql.Column(sql.ARRAY(sql.String(24)))
     alternate_url = sql.Column(sql.String(255))
     published_at = sql.Column(sql.DateTime)
+
+    def salary_mean(self):
+        if self.salary_from is None:
+            return None
+        if self.salary_to is None:
+            return self.salary_from
+        return (self.salary_from + self.salary_to) / 2

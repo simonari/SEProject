@@ -32,14 +32,16 @@ JWT_REFRESH_SECRET_KEY = "13ugfdfgh@#$%^@&jkl45678902"
 app = FastAPI()
 
 
-def token_required(func):
+async def token_required(func):
     @wraps(func)
-    def wrapper(*args, **kwargs):
-
+    async def wrapper(*args, **kwargs):
         payload = jwt.decode(kwargs['dependencies'], JWT_SECRET_KEY, ALGORITHM)
         user_id = payload['sub']
-        data = kwargs['session'].query(models.TokenTable).filter_by(user_id=user_id, access_toke=kwargs['dependencies'],
-                                                                    status=True).first()
+        session: AsyncSession = kwargs['session']
+        query = orm.select(TokenTable).filter_by(user_id=user_id,
+                                                 access_toke=kwargs['dependencies'],
+                                                 status=True)
+        data = (await session.execute(query)).scalar()
         if data:
             return func(kwargs['dependencies'], kwargs['session'])
 
@@ -95,13 +97,13 @@ async def get_salary_plot():
 
 @token_required
 @app.get("/vacancies/analyze/experience")
-async def get_experience_plot():
+async def get_experience_plot(dependencies=Depends(JWTBearer()), session: AsyncSession = Depends(get_async_session)):
     return FileResponse("experience.png")
 
 
 @token_required
 @app.get("/vacancies/analyze/employment")
-async def get_employment_plot():
+async def get_employment_plot(dependencies=Depends(JWTBearer()), session: AsyncSession = Depends(get_async_session)):
     return FileResponse("employment.png")
 
 

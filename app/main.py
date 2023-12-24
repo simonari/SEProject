@@ -32,6 +32,23 @@ JWT_REFRESH_SECRET_KEY = "13ugfdfgh@#$%^@&jkl45678902"
 app = FastAPI()
 
 
+def token_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+
+        payload = jwt.decode(kwargs['dependencies'], JWT_SECRET_KEY, ALGORITHM)
+        user_id = payload['sub']
+        data = kwargs['session'].query(models.TokenTable).filter_by(user_id=user_id, access_toke=kwargs['dependencies'],
+                                                                    status=True).first()
+        if data:
+            return func(kwargs['dependencies'], kwargs['session'])
+
+        else:
+            return {'msg': "Token blocked"}
+
+    return wrapper
+
+
 @app.on_event("startup")
 async def on_startup():
     await init_tables()
@@ -76,11 +93,13 @@ async def get_salary_plot():
     return FileResponse("salaries.png")
 
 
+@token_required
 @app.get("/vacancies/analyze/experience")
 async def get_experience_plot():
     return FileResponse("experience.png")
 
 
+@token_required
 @app.get("/vacancies/analyze/employment")
 async def get_employment_plot():
     return FileResponse("employment.png")
@@ -164,20 +183,3 @@ async def logout(dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(g
         await db.commit()
         await db.refresh(existing_token)
     return {"message": "Logout Successfully"}
-
-
-def token_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-
-        payload = jwt.decode(kwargs['dependencies'], JWT_SECRET_KEY, ALGORITHM)
-        user_id = payload['sub']
-        data = kwargs['session'].query(models.TokenTable).filter_by(user_id=user_id, access_toke=kwargs['dependencies'],
-                                                                    status=True).first()
-        if data:
-            return func(kwargs['dependencies'], kwargs['session'])
-
-        else:
-            return {'msg': "Token blocked"}
-
-    return wrapper

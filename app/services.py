@@ -2,8 +2,7 @@ import sqlalchemy as orm
 
 from . import database
 from . import models
-from .models import Vacancy
-
+from .models import Vacancy, User
 from . import custom_typings as ct
 from .logger import logger
 
@@ -85,8 +84,10 @@ class DataBaseManager:
             result = await session.execute(query)
 
         result = [item[0].__dict__ for item in result.all()]
+
         for item in result:
             item.pop("_sa_instance_state")
+
         print(query_dict)
         print(query)
         print(result)

@@ -1,4 +1,5 @@
-import datetime
+from datetime import datetime
+
 import sqlalchemy as sql
 import sqlalchemy.orm as orm
 
@@ -30,3 +31,20 @@ class Vacancy(Base):
         if self.salary_to is None:
             return self.salary_from
         return (self.salary_from + self.salary_to) / 2
+
+
+class User(Base):
+    __tablename__ = 'users'
+    id = sql.Column(sql.Integer, primary_key=True)
+    username = sql.Column(sql.String(50), nullable=False)
+    email = sql.Column(sql.String(100), unique=True, nullable=False)
+    password = sql.Column(sql.String(100), nullable=False)
+
+
+class TokenTable(Base):
+    __tablename__ = "token"
+    user_id = sql.Column(sql.Integer)
+    access_toke = sql.Column(sql.String(450), primary_key=True)
+    refresh_toke = sql.Column(sql.String(450), nullable=False)
+    status = sql.Column(sql.Boolean)
+    created_date = sql.Column(sql.DateTime, default=datetime.now)

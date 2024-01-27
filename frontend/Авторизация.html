@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Войти</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+            .container {
+                width: 50%;
+                margin: auto;
+                padding: 20px;
+            }
+            label {
+                display: block;
+                margin-bottom: 8px;
+            }
+            input {
+                width: 100%;
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+            button {
+                background-color: #4caf50;
+                color: white;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Авторизация</h2>
+            <form id="registrationForm" method="POST">
+                <label for="username">Имя пользователя:</label>
+                <input type="text" id="username" name="username" required />
+
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required />
+
+                <button type="button" type="submit">Войти</button>
+            </form>
+        </div>
+
+        <script></script>
+    </body>
+</html>

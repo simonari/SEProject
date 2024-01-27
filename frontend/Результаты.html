@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Результаты анализа по заданной вакансии</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                background-color: #f4f4f4;
+            }
+
+            h1 {
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+            .image-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            button {
+                padding: 10px 20px;
+                margin-top: 20px;
+                background-color: #3498db;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div><h1>Результаты анализа по заданной вакансии</h1></div>
+
+        <div class="image-container">
+            <div><img src="./image.jpg" alt="" /></div>
+            <div><img src="./image1.jpg" alt="" /></div>
+            <div><img src="./image2.jpg" alt="" /></div>
+
+            <div class="text-container">
+                <p>Среднее по зп: данные получаются с бэкенда</p>
+                <p>Медианное значение: данные получаются с бэкенда</p>
+                <p>
+                    Количество вакансий, которые учавствовали в составлении
+                    статистики: данные получаются с бэкенда
+                </p>
+            </div>
+        </div>
+
+        <button onclick="loadNewVacancy()">
+            Перейти к анализу другой вакансии
+        </button>
+
+        <script></script>
+    </body>
+</html>

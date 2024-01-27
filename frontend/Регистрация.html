@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Страница регистрации</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+            .container {
+                width: 50%;
+                margin: auto;
+                padding: 20px;
+            }
+            label {
+                display: block;
+                margin-bottom: 8px;
+            }
+            input {
+                width: 100%;
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+            button {
+                background-color: #4caf50;
+                color: white;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #45a049;
+            }
+
+            #relocationButton {
+                background-color: gray;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Регистрация</h2>
+            <form id="registrationForm">
+                <label for="username">Имя пользователя:</label>
+                <input type="text" id="username" name="username" required />
+
+                <label for="email">Электронная почта:</label>
+                <input type="email" id="email" name="email" required />
+
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required />
+
+                <label for="confirmPassword">Подтвердите пароль:</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    required
+                />
+
+                <button
+                    type="button"
+                    id="registration"
+                    onclick="checkUsernameAvailability()"
+                >
+                    Проверка
+                </button>
+                <button
+                    id="relocationButton"
+                    type="button"
+                    onclick="relocation()"
+                >
+                    Войти
+                </button>
+            </form>
+        </div>
+
+        <script>
+            const requestURL = 'https://jsonplaceholder.typicode.com/posts'
+
+            function sendRequest(method, url, body = null) {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest()
+
+                    xhr.open(method, url)
+
+                    xhr.responseType = 'json' // по-умолчанию text/plain (string)
+                    xhr.setRequestHeader('Content-Type', 'application/json')
+
+                    xhr.onload = () => {
+                        if (xhr.status >= 400) {
+                            reject(xhr.response)
+                        } else {
+                            resolve(xhr.response)
+                        }
+                    }
+
+                    xhr.onerror = () => {
+                        reject(xhr.response)
+                    }
+
+                    xhr.send(JSON.stringify(body))
+                })
+            }
+
+            const body = {
+                name: 'Nikolay',
+                age: 29,
+            }
+
+            sendRequest('POST', requestURL, {})
+                .then((data) => console.log(data))
+                .catch((err) => console.log(err))
+
+            function checkUsernameAvailability() {
+                var username = document.getElementById('username').value
+                var password = document.getElementById('password').value
+                var confirmPassword =
+                    document.getElementById('confirmPassword').value
+
+                var buttonRegistration = document.getElementById('registration')
+
+                if (password !== confirmPassword) {
+                    document.getElementById('confirmPassword').value = ''
+
+                    document.getElementById('confirmPassword').placeholder =
+                        'Пароль не совпадает'
+                } else {
+                    const body = {
+                        username: document.getElementById('username').value,
+                    }
+
+                    sendRequest('POST', requestURL, body)
+                        .then((data) => {
+                            if (data == 'true') {
+                                document.getElementById('username').value = ''
+                                document.getElementById(
+                                    'username'
+                                ).placeholder = 'Такое имя уже существует'
+                            } else {
+                                document.getElementById(
+                                    'registrationForm'
+                                ).method = 'POST'
+                                document.getElementById('registration').value =
+                                    'Зарегистрироваться'
+                                document.getElementById(
+                                    'registration'
+                                ).onclick = null
+                                document.getElementById('registration').type =
+                                    'submit'
+                            }
+                        })
+                        .catch((err) => console.log(err))
+                }
+            }
+
+            function relocation() {
+                window.location.href = './Авторизация.html'
+            }
+        </script>
+    </body>
+</html>
+
+<!-- (username == 'user') {
+    document.getElementById('username').value = ''
+
+    document.getElementById('username').placeholder =
+        'Такой пользователь уже существует'
+
+    buttonRegistration.style.backgroundColor = 'darkred'
+    document.getElementById(
+        'relocationButton'
+    ).style.backgroundColor = 'green'
+} else {
+    window.location.href = './Успешная регистрация.html'
+} -->
